@@ -1,0 +1,64 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout kode
+        uses: actions/checkout@v4
+
+      - name: Cache node_modules (frontend)
+        uses: actions/cache@v3
+        with:
+          path: frontend/node_modules
+          key: ${{ runner.os }}-frontend-node-${{ hashFiles('frontend/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-frontend-node-
+
+      - name: Namestitev odvisnosti (frontend)
+        run: npm ci
+        working-directory: frontend
+
+      - name: Zagon testov (frontend) z coverage
+        run: npm test
+        working-directory: frontend
+
+      - name: Upload coverage artefakta (frontend)
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-coverage
+          path: frontend/coverage
+
+  test-backend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout kode
+        uses: actions/checkout@v4
+
+      - name: Cache node_modules (backend)
+        uses: actions/cache@v3
+        with:
+          path: backend/node_modules
+          key: ${{ runner.os }}-backend-node-${{ hashFiles('backend/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-backend-node-
+
+      - name: Namestitev odvisnosti (backend)
+        run: npm ci
+        working-directory: backend
+
+      - name: Zagon testov (backend) z coverage
+        run: npm test
+        working-directory: backend
+
+      - name: Upload coverage artefakta (backend)
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: backend/coverage
