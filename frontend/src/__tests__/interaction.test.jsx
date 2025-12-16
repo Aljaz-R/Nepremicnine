@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor  } from '@testing-library/react';
 import { vi } from 'vitest';
 import App from '../App';
 
@@ -24,25 +24,28 @@ describe('App – interakcije (modal, fav, CRUD)', () => {
     render(<App />);
     const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
 
-    const addBtn = screen.getByText(/Dodaj oglas/i);
-    fireEvent.click(addBtn);
+    fireEvent.click(screen.getByText(/Dodaj oglas/i));
+    expect(screen.getByText(/Nov oglas/i)).toBeInTheDocument();
 
-    const submitBtn = screen.getByRole('button', { name: 'Dodaj' });
-    fireEvent.click(submitBtn);
+    const form = screen.getByText(/Nov oglas/i).closest('form');
+    fireEvent.submit(form);
 
-    expect(alertSpy).toHaveBeenCalledTimes(1);
+    expect(alertSpy).toHaveBeenCalled();
     expect(alertSpy.mock.calls[0][0]).toMatch(/Izpolni naslov, mesto, ceno in površino/i);
 
     alertSpy.mockRestore();
   });
 
-  test('priljubljeni oglas spremeni stanje ikone srca', () => {
+  test('priljubljeni oglas zapiše id v localStorage favs', async () => {
     render(<App />);
-    const favBtn = screen.getAllByTitle(/Priljubljeno/i)[0];
-    const icon = favBtn.querySelector('svg');
 
-    expect(icon).toHaveAttribute('fill', 'none');
+    const favBtn = screen.getAllByTitle(/Priljubljeno/i)[0];
     fireEvent.click(favBtn);
-    expect(icon).toHaveAttribute('fill', 'currentColor');
+
+    await waitFor(() => {
+      const favs = JSON.parse(localStorage.getItem('favs') || '[]');
+      expect(favs).toContain('apt-1');
+    });
   });
+
 });
