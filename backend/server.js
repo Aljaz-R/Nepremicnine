@@ -2,6 +2,7 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const fs = require("fs");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -39,16 +40,22 @@ app.get("/api/nepremicnine", (req, res) => {
 });
 
 // =======================
-// SERVIRANJE FRONTENDA
-// backend/dist mora vsebovati index.html
+// SERVIRANJE FRONTENDA (Vite build)
+// po buildu je frontend v: frontend/dist
+// Če teče iz backend/dist/server.js, moraš iti 2 nivoja gor.
 // =======================
-const distPath = path.join(__dirname, "dist");
-app.use(express.static(distPath));
+const clientDistPath = path.join(__dirname, "..", "..", "frontend", "dist");
 
-// React SPA fallback
-app.get("*", (req, res) => {
-  res.sendFile(path.join(distPath, "index.html"));
-});
+if (fs.existsSync(clientDistPath)) {
+  app.use(express.static(clientDistPath));
+
+  // SPA fallback (Express 5: ne uporabljaj "*")
+  app.get(/^(?!\/api\/).*/, (req, res) => {
+    res.sendFile(path.join(clientDistPath, "index.html"));
+  });
+} else {
+  console.warn("Frontend dist ne obstaja:", clientDistPath);
+}
 
 // =======================
 app.listen(PORT, () => {
