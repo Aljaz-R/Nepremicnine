@@ -6,14 +6,17 @@ function setValue(el, value) {
 }
 
 describe('App – filtri', () => {
-  test('filtrira po iskalnem nizu (Bled)', () => {
+  test('filtrira po mestu Bled (select)', () => {
     render(<App />);
-    const searchInput = screen.getByPlaceholderText(/naslov, opis/i);
-    setValue(searchInput, 'Bled');
+
+    const selects = screen.getAllByRole('combobox');
+    const mestoSelect = selects[0]; // Mesto
+
+    setValue(mestoSelect, 'Bled');
 
     const cards = screen.getAllByRole('article');
-    expect(cards).toHaveLength(1);
-    expect(cards[0]).toHaveTextContent(/Bled/);
+    expect(cards.length).toBe(1);
+    expect(cards[0].textContent).toMatch(/Bled/);
   });
 
   test('filtrira po mestu Ljubljana', () => {
