@@ -137,6 +137,4 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-    steps:
-      - name: Trigger Render deploy
-        run: curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
+
