@@ -1,15 +1,13 @@
+// backend/build.mjs
 import { build } from "esbuild";
-import { cpSync } from 'fs';
-
-cpSync('../frontend/dist', './dist', { recursive: true });
 
 await build({
   entryPoints: ["server.js"],
   bundle: true,
   platform: "node",
-  target: "node20",
+  target: "node22",
   outfile: "dist/server.js",
-  sourcemap: true,
+  external: ["express"],
 });
 
 console.log("Backend build OK -> dist/server.js");

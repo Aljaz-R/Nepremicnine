@@ -41,15 +41,14 @@ app.get("/api/nepremicnine", (req, res) => {
 
 // =======================
 // SERVIRANJE FRONTENDA (Vite build)
-// po buildu je frontend v: frontend/dist
-// Če teče iz backend/dist/server.js, moraš iti 2 nivoja gor.
+// frontend/dist je relativno na root repo
 // =======================
-const clientDistPath = path.join(__dirname, "..", "..", "frontend", "dist");
+const clientDistPath = path.resolve(__dirname, "../../frontend/dist");
 
 if (fs.existsSync(clientDistPath)) {
   app.use(express.static(clientDistPath));
 
-  // SPA fallback (Express 5: ne uporabljaj "*")
+  // SPA fallback (Express 5 kompatibilno)
   app.get(/^(?!\/api\/).*/, (req, res) => {
     res.sendFile(path.join(clientDistPath, "index.html"));
   });
