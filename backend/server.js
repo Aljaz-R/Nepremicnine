@@ -45,8 +45,8 @@ app.get("/api/nepremicnine", (req, res) => {
 const distPath = path.join(__dirname, "dist");
 app.use(express.static(distPath));
 
-// React SPA fallback
-app.get("*", (req, res) => {
+// React SPA fallback (Express 5: ne uporabljaj "*")
+app.get(/^(?!\/api\/).*/, (req, res) => {
   res.sendFile(path.join(distPath, "index.html"));
 });
 
