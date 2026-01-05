@@ -1,4 +1,7 @@
 import { build } from "esbuild";
+import { cpSync } from 'fs';
+
+cpSync('../frontend/dist', './dist', { recursive: true });
 
 await build({
   entryPoints: ["server.js"],

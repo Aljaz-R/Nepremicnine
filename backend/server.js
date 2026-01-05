@@ -1,14 +1,17 @@
 // backend/server.js
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
 
-// isti podatki kot v frontendu (SEED)
+// =======================
+// SEED podatki
+// =======================
 const listings = [
   { id: "apt-1", title: "Svetlo 2-sobno stanovanje", city: "Ljubljana", price: 285000, beds: 2, baths: 1, size: 58, type: "Stanovanje" },
   { id: "apt-2", title: "Garsonjera blizu centra", city: "Maribor", price: 125000, beds: 1, baths: 1, size: 32, type: "Stanovanje" },
@@ -24,16 +27,30 @@ const listings = [
   { id: "house-6", title: "Vila s pogledom", city: "Piran", price: 1100000, beds: 5, baths: 4, size: 260, type: "Hiša" },
 ];
 
-// health-check
-app.get("/", (req, res) => {
-  res.send("Backend za nepremicnine deluje");
+// =======================
+// API
+// =======================
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok" });
 });
 
-// glavni API endpoint
 app.get("/api/nepremicnine", (req, res) => {
   res.json(listings);
 });
 
+// =======================
+// SERVIRANJE FRONTENDA
+// backend/dist mora vsebovati index.html
+// =======================
+const distPath = path.join(__dirname, "dist");
+app.use(express.static(distPath));
+
+// React SPA fallback
+app.get("*", (req, res) => {
+  res.sendFile(path.join(distPath, "index.html"));
+});
+
+// =======================
 app.listen(PORT, () => {
   console.log(`Backend posluša na http://localhost:${PORT}`);
 });
