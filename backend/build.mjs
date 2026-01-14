@@ -1,4 +1,4 @@
-// backend/build.mjs :
+// backend/build.mjs :s
 import { build } from "esbuild";
 
 await build({
