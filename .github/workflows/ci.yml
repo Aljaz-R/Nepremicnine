@@ -164,7 +164,7 @@ jobs:
       - name: Check Quality Gate via SonarCloud API
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          PROJECT_KEY: YOUR_PROJECT_KEY
+          PROJECT_KEY: Aljaz-R_Nepremicnine
         run: |
           set -e
 
