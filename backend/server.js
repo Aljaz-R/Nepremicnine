@@ -48,7 +48,7 @@ const clientDistPath = path.resolve(__dirname, "../../frontend/dist");
 if (fs.existsSync(clientDistPath)) {
   app.use(express.static(clientDistPath));
 
-  // SPA fallback (Express 5 kompatibilno)
+  // SPA fallback (Express 5 kompatibilno)::::
   app.get(/^(?!\/api\/).*/, (req, res) => {
     res.sendFile(path.join(clientDistPath, "index.html"));
   });
